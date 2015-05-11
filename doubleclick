@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+
+import RPi.GPIO as GPIO
+import time
+
+GPIO.setmode(GPIO.BCM)
+
+GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(25, GPIO.OUT)
+
+clicks=[]
+
+while True:
+    o = time.time()
+    input_state = GPIO.input(22)
+    #led = GPIO.output(25)
+    GPIO.output(25, False)
+    if(GPIO.input(22) == False):
+        t = time.time()
+        print ("button pressed")
+        #t2 = time.time()
+        while GPIO.input(22) == False:
+            t2 = time.time()
+            if(t2-t >5):
+                print("Hold")
+                break
+        #GPIO.wait_for_edge(22, GPIO.RISING)
+        t2 = time.time()
+        print ("button dropped")
+        #print(str(t2-t)+ " sekunder")
+        clicks.insert(0, o)
+        if(len(clicks) > 1):
+            if((clicks[0] - clicks[1]) < 0.3):
+                print("D " + str(clicks[0]-clicks[1]))
+            #print(clicks[0])
+            #print(clicks[1])
